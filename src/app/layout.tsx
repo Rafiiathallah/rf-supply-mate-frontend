@@ -1,8 +1,14 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { headers } from "next/headers";
 
-const inter = Inter({ subsets: ["latin"] });
+import { cookieToInitialState } from "wagmi";
+
+import { config } from "@/utils/web3";
+import Web3ModalProvider from "@/context/web3";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,9 +20,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialState = cookieToInitialState(config, headers().get("cookie"));
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <Web3ModalProvider initialState={initialState}>
+          {children}
+        </Web3ModalProvider>
+        <ToastContainer />
+      </body>
     </html>
   );
 }
