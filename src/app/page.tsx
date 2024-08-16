@@ -22,6 +22,11 @@ export default function Home() {
                 View NFT
               </button>
             </Link>
+            <Link href="/transferNFTPage">
+              <button className="py-2 px-4 bg-orange-500 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Transfer NFT
+              </button>
+            </Link>
             <Link href="/mintNFTPage">
               <button className="py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                 Mint NFT
