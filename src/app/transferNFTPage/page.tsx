@@ -1,5 +1,3 @@
-// TransferNFTPage.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -11,6 +9,7 @@ import { SupplyMateContractAddress } from "@/utils/smartContractAddress";
 import { Address } from "viem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 // Define a type for your NFT details
 type NFTDetails = {
@@ -26,6 +25,7 @@ export default function TransferNFTPage() {
   const [nftList, setNftList] = useState<NFTDetails[]>([]);
   const { address, isConnected } = useAccount();
   const contractAddress = SupplyMateContractAddress as Address;
+  const router = useRouter();
 
   // Fetch NFTs owned by the current account
   const { data: nftsData, error: nftsError } = useContractRead({
@@ -37,8 +37,18 @@ export default function TransferNFTPage() {
 
   useEffect(() => {
     if (nftsData) {
-      const detailsArray = nftsData as unknown as NFTDetails[];
+      // Correctly map the data to the NFTDetails type
+      const detailsArray = (nftsData as any[]).map((nft) => ({
+        title: nft.title,
+        description: nft.description,
+        quantity: parseInt(nft.quantity), // Ensure quantity is correctly converted
+        location: nft.location,
+        currentOwner: nft.currentOwner,
+        nextOwner: nft.nextOwner,
+      }));
+
       setNftList(detailsArray);
+
       if (detailsArray.length === 0) {
         toast.warn("You do not own any NFTs.", {
           position: "bottom-right",
@@ -73,17 +83,18 @@ export default function TransferNFTPage() {
     }
   }, [nftsData, nftsError]);
 
-  const handleTransfer = (tokenId: number) => {
-    // Implement transfer logic here
-    toast.info(`Transfer NFT ID: ${tokenId} button clicked`, {
-      position: "bottom-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  const handleTransfer = (nft: NFTDetails) => {
+    // Navigate to the verifyNFTPage with the selected NFT details encoded in the query parameters
+    const query = new URLSearchParams({
+      title: nft.title,
+      description: nft.description,
+      quantity: nft.quantity.toString(),
+      location: nft.location,
+      currentOwner: nft.currentOwner,
+      nextOwner: nft.nextOwner,
+    }).toString();
+
+    router.push(`/verifyNFTPage?${query}`);
   };
 
   return (
@@ -93,26 +104,32 @@ export default function TransferNFTPage() {
         <h1 className="text-2xl font-bold mb-4">Your NFTs</h1>
 
         {nftList.length > 0 ? (
-          <div className="flex flex-col space-y-20 overflow-y-auto max-h-screen w-full">
+          <div className="flex flex-col space-y-6 overflow-y-auto max-h-screen w-full">
             {nftList.map((nft, index) => (
               <div
                 key={index}
-                className="card shadow-md rounded-lg overflow-visible w-2/3"
-                style={{ minHeight: "200px", paddingBottom: "1rem" }}
+                className="border border-gray-700 rounded-lg shadow-lg p-4 bg-black"
+                style={{ minHeight: "200px" }}
               >
                 <div className="p-4">
-                  <h6 className="text-xl font-bold">{nft.title}</h6>
-                  <p>Description: {nft.description}</p>
-                  <p>Quantity: {nft.quantity}</p>
-                  <p>Location: {nft.location}</p>
-                  <p>Current Owner: {nft.currentOwner}</p>
-                  <p>Next Owner: {nft.nextOwner}</p>
-                  <button
-                    onClick={() => handleTransfer(index + 1)}
-                    className="mt-4 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Transfer
-                  </button>
+                  <h6 className="text-xl font-bold mb-2 text-orange-500">
+                    {nft.title}
+                  </h6>
+                  <p className="mb-1">
+                    <strong>Description:</strong> {nft.description}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Quantity:</strong> {nft.quantity}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Location:</strong> {nft.location}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Current Owner:</strong> {nft.currentOwner}
+                  </p>
+                  <p>
+                    <strong>Next Owner:</strong> {nft.nextOwner}
+                  </p>
                 </div>
               </div>
             ))}

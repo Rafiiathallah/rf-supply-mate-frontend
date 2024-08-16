@@ -150,7 +150,7 @@ export default function ViewNFTPage() {
 
             {nftDetails && (
               <div className="mt-4">
-                <h6 className="text-lg font-bold text-white-800">
+                <h6 className="text-lg font-bold text-orange-500">
                   NFT Details:
                 </h6>
                 <p>Title: {nftDetails.title}</p>

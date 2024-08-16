@@ -8,7 +8,8 @@ export function Footer() {
           <div className="row">
             <div className="col-12 col-md text-center">
               <p className="d-block my-3">
-                By Sean and Rafii ONLY | All rights reserved.
+                Blockchain Development &nbsp; | &nbsp; Group 19 &nbsp; | &nbsp;
+                All rights reserved.
               </p>
             </div>
           </div>

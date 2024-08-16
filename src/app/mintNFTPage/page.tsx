@@ -31,6 +31,20 @@ export default function MintNFTPage() {
   );
 
   const handleMintTransaction = () => {
+    // Validation: Check if any input field is empty
+    if (!title || !description || !quantity || !location || !nextOwner) {
+      toast.error("Please fill in all fields before minting.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
     if (!isConnected) {
       toast.error("Please connect your wallet before minting.", {
         position: "bottom-right",
@@ -80,10 +94,10 @@ export default function MintNFTPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow flex justify-center items-center">
-        <div className="card shadow-md rounded-lg overflow-hidden max-w-sm">
+        <div className="border border-gray-700 bg-black text-white shadow-lg rounded-lg overflow-hidden max-w-sm">
           <div className="p-4">
             <h6 className="text-xl font-bold text-white-800">Mint NFT</h6>
-            <h6 className="text-md font-semibold text-gray-600 mt-2">
+            <h6 className="text-md font-semibold text-gray-400 mt-2">
               Enter the details
             </h6>
 
