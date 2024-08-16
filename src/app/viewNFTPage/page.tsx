@@ -28,7 +28,7 @@ export default function ViewNFTPage() {
   const contractAddress = SupplyMateContractAddress as Address;
   const { isConnected } = useAccount();
 
-  // useContractRead hook without the 'enabled' property
+  // useContractRead hook
   const { data, error } = useContractRead({
     address: contractAddress,
     abi: supplyMate.abi,
@@ -38,16 +38,35 @@ export default function ViewNFTPage() {
 
   useEffect(() => {
     if (fetchData && data) {
-      setNftDetails(data as NFTDetails);
-      toast.success("NFT details fetched successfully!", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      const details = data as unknown as {
+        title: string;
+        description: string;
+        quantity: any; // Temporarily using 'any' type to process BigNumber
+        location: string;
+        currentOwner: Address;
+        nextOwner: Address;
+      };
+
+      if (details) {
+        setNftDetails({
+          title: details.title,
+          description: details.description,
+          quantity: Number(details.quantity), // Convert BigNumber to number
+          location: details.location,
+          currentOwner: details.currentOwner,
+          nextOwner: details.nextOwner,
+        });
+
+        toast.success("NFT details fetched successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
       setFetchData(false);
     } else if (fetchData && error) {
       if (error.message.includes("NFT does not exist")) {
